@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📜 Wielka Biblioteka Arkanów</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Lora:ital,wght@0,400;0,600;1,400&family=Noto+Serif+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="body-locked">
+
+<!-- MROCZNY AMBIENT AUDIO (TWÓJ PLIK) -->
+<audio id="bg-ambient" loop>
+    <source src="The_Keeper_s_Ledger.mp3" type="audio/mpeg">
+</audio>
+
+<!-- KONTROLKA AUDIO -->
+<div class="audio-control" id="audio-ctrl">
+  <button class="audio-ctrl-btn" id="audio-mute-btn" onclick="toggleAudio()" title="Wycisz / włącz">
+    <i class="fa-solid fa-volume-high" id="audio-icon"></i>
+  </button>
+  <input type="range" class="audio-vol-slider" id="audio-vol-slider" min="0" max="100" value="50" orient="vertical" oninput="setAudioVolume(this.value)" title="Głośność">
+  <div class="audio-vol-label" id="audio-vol-label">50%</div>
+</div>
+
+<!-- FAZA 1: WROTA ZAMKU -->
+<div id="cinematic-gates">
+  <div class="gate-half gate-left" id="gate-left"></div>
+  <div class="gate-half gate-right" id="gate-right"></div>
+  <div class="gate-content" id="gate-content">
+    <h1 class="gate-title">Pałac Magii<br>Nihongo</h1>
+    <button class="gate-btn" onclick="openLibraryGates()">Otwórz Wrota</button>
+  </div>
+</div>
+
+<!-- FAZA 2: SLAJD POWITALNY (Mistrzyni & Filary) -->
+<div id="intro-slide">
+  <div class="slide-wrapper">
+    <div class="slide-content">
+      <h2>Filary Praw Magii</h2>
+      <p class="lead">Przekroczyłeś próg. Zanim zaczniesz studiować zaklęcia, poznaj fundamenty naszej wiedzy.</p>
+      <div class="pillars">
+        <div class="pillar">
+          <div class="pillar-icon"><i class="fa-solid fa-scroll"></i></div>
+          <div class="pillar-text"><h3>Leksykon Słów</h3><p>Zbiór zapomnianych glifów i słów mocy. Poszeregowane tematycznie runy.</p></div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon"><i class="fa-solid fa-book-journal-whills"></i></div>
+          <div class="pillar-text"><h3>Księga Arkanów</h3><p>Święte reguły składni. Poznaj potęgę partykuł i władzę nad czasem.</p></div>
+        </div>
+        <div class="pillar">
+          <div class="pillar-icon"><i class="fa-solid fa-dungeon"></i></div>
+          <div class="pillar-text"><h3>Próba Dojo</h3><p>Mroczne lochy języka. Udowodnij swoją wartość w walce ze słówkami.</p></div>
+        </div>
+      </div>
+      <button class="slide-btn" onclick="enterMainHall()">Wejdź do Głównej Sali</button>
+    </div>
+    <div class="slide-image slide-image--video">
+      <video
+        id="intro-video"
+        src="grok-video-5a808568-48b0-473c-913f-6aeae7072679.mp4"
+        autoplay
+        loop
+        muted
+        playsinline
+        preload="auto"
+      ></video>
+      <div class="slide-image-text">Mistrzyni Akemi oczekuje...</div>
+    </div>
+  </div>
+</div>
+
+<!-- FAZA 3: GŁÓWNA APLIKACJA -->
+<div id="main-app">
+  <nav>
+    <div class="nav-logo">📜 ARCANA</div>
+    <div class="nav-tabs">
+      <div class="nav-tab active" onclick="showPage('slownik')">📚 Leksykon <span class="nav-count" id="nav-count-dict">...</span></div>
+      <div class="nav-tab" onclick="showPage('mapa')">🗺️ Mapa Świata</div>
+      <div class="nav-tab" onclick="showPage('gramatyka')">✦ Arkana</div>
+      <div class="nav-tab" onclick="showPage('dojo')">⚔️ Próba</div>
+      <div class="nav-tab" onclick="showPage('kiai')">🗡️ Kiai</div>
+      <div class="nav-tab" onclick="showPage('zdania')">✏️ Kreator</div>
+      <div class="nav-tab" onclick="showPage('zwoje')">🎴 Zwoje</div>
+      <div class="nav-tab" onclick="showPage('sceny')">🎭 Sceny</div>
+      <div class="nav-tab" onclick="showPage('chat')">🔮 Mistrzyni</div>
+      <div class="nav-tab" onclick="showPage('gildia')">🏛️ Gildia <span class="nav-count" id="fav-count">0</span></div>
+    </div>
+  </nav>
+
+  <!-- YUMI -->
+  <div class="yumi" id="yumi" style="display:none">
+    <div class="bubble" id="yumi-bubble"><div class="close-y" onclick="hideYumi()">✕</div><div id="yumi-text">Cześć! Jestem Yumi~</div></div>
+    <svg class="avatar" viewBox="0 0 80 100" onclick="toggleYumi()" xmlns="http://www.w3.org/2000/svg">
+      <path d="M 15 35 Q 10 65, 20 95 L 15 100 L 30 100 L 28 85 Q 22 70, 25 55" fill="#3d2450"/>
+      <path d="M 65 35 Q 70 65, 60 95 L 65 100 L 50 100 L 52 85 Q 58 70, 55 55" fill="#3d2450"/>
+      <path d="M 28 60 L 52 60 L 58 98 L 22 98 Z" fill="#8b1a1a" stroke="#d4af37" stroke-width="1"/>
+      <path d="M 28 60 L 40 70 L 52 60 L 50 75 L 40 78 L 30 75 Z" fill="#d4af37"/>
+      <ellipse cx="40" cy="40" rx="17" ry="20" fill="#ffe0c4"/>
+      <path d="M 23 32 Q 25 20, 40 18 Q 55 20, 57 32 Q 55 28, 48 30 Q 44 27, 40 29 Q 36 27, 32 30 Q 25 28, 23 32" fill="#3d2450"/>
+      <path d="M 23 32 L 24 44 L 28 40 Z" fill="#3d2450"/>
+      <path d="M 57 32 L 56 44 L 52 40 Z" fill="#3d2450"/>
+      <ellipse cx="32" cy="42" rx="3" ry="4" fill="#6b2d8c"/>
+      <ellipse cx="48" cy="42" rx="3" ry="4" fill="#6b2d8c"/>
+      <circle cx="32" cy="41" r="1" fill="#fff"/>
+      <circle cx="48" cy="41" r="1" fill="#fff"/>
+      <ellipse cx="28" cy="48" rx="2.5" ry="1.5" fill="#ff9999" opacity=".6"/>
+      <ellipse cx="52" cy="48" rx="2.5" ry="1.5" fill="#ff9999" opacity=".6"/>
+      <path d="M 37 50 Q 40 53, 43 50" stroke="#8b1a1a" stroke-width="1" fill="none"/>
+      <text x="52" y="26" font-size="8" fill="#d4af37">✦</text>
+    </svg>
+  </div>
+
+  <!-- LEKSYKON -->
+  <div class="page active" id="page-slownik">
+    <!-- 🌸 HANAMI BANNER - codzienne słowo -->
+    <div id="hanami-banner-container"></div>
+    <div class="section-title">📚 Leksykon Zapomnianych Słów</div>
+    <div class="section-subtitle">Antyczne glify poszeregowane wedle przeznaczenia. Kliknij kartę, aby rozwinąć jej sekrety!</div>
+    <div class="toolbar">
+      <div class="search-wrap"><span class="s-icon">🔍</span><input type="text" id="search" placeholder="Szukaj po polsku lub romaji..." oninput="renderGridDebounced()"></div>
+      <button id="manga-toggle-btn" onclick="toggleMangaMode()">📖 Tryb Manga</button>
+    </div>
+    <div class="filt-row" id="filt-row"></div>
+    <div class="stats-line" id="stats-line"></div>
+    <div id="grid-container"></div>
+  </div>
+
+  <!-- GRAMATYKA — KSIĘGA ARKANÓW CLAUDE 3D ULTRA -->
+  <div class="page" id="page-gramatyka">
+    <div class="section-title">✦ Księga Arkanów</div>
+    <div class="section-subtitle">Studiuj święte reguły. Zmiana rozdziału zaktualizuje prawą stronę księgi za pomocą magii.</div>
+
+    <!-- ŚWIECZNIKI -->
+    <div class="grimoire-scene">
+      <!-- Lewa świeca -->
+      <div class="candle candle-left" id="candle-left">
+        <div class="candle-body">
+          <div class="candle-drip"></div>
+          <div class="candle-drip candle-drip-2"></div>
+        </div>
+        <div class="candle-wick"></div>
+        <div class="candle-flame-wrap">
+          <div class="candle-flame">
+            <div class="candle-flame-inner"></div>
+          </div>
+          <div class="candle-glow"></div>
+        </div>
+        <div class="candle-base"></div>
+        <div class="candle-light-cast"></div>
+      </div>
+
+      <!-- Prawa świeca -->
+      <div class="candle candle-right" id="candle-right">
+        <div class="candle-body">
+          <div class="candle-drip"></div>
+          <div class="candle-drip candle-drip-2"></div>
+        </div>
+        <div class="candle-wick"></div>
+        <div class="candle-flame-wrap">
+          <div class="candle-flame">
+            <div class="candle-flame-inner"></div>
+          </div>
+          <div class="candle-glow"></div>
+        </div>
+        <div class="candle-base"></div>
+        <div class="candle-light-cast"></div>
+      </div>
+
+      <!-- Ambient particles (theme-specific) -->
+      <div class="grimoire-ambient" id="grimoire-ambient"></div>
+
+      <div class="grimoire-container" id="grimoire-wrapper">
+        <div class="grimoire-book theme-gold" id="grimoire-book">
+          <!-- PRZEDNIA OKŁADKA (zamknięta) -->
+          <div class="book-front-cover" id="book-front-cover" onclick="openGrimoireBook()">
+            <div class="book-cover-sparkles" id="cover-sparkles"></div>
+            <!-- Ozdobny łańcuch -->
+            <div class="cover-chain cover-chain-top"></div>
+            <div class="cover-chain cover-chain-bottom"></div>
+            <div class="book-cover-emblem">秘</div>
+            <div class="book-cover-title">Księga<br>Arkanów</div>
+            <div class="book-cover-subtitle">~ Święte Prawa Magii Nihongo ~</div>
+            <div class="book-cover-edition">Vol. I — Kompendium Zaklęć</div>
+            <div class="book-cover-open-hint">✦ Kliknij aby otworzyć ✦</div>
+          </div>
+
+          <!-- Przycisk zamknięcia (widoczny po otwarciu) -->
+          <button class="book-close-btn" id="book-close-btn" onclick="closeGrimoireBook()" title="Zamknij księgę">✕ Zamknij</button>
+
+          <!-- Chapter tabs on right edge -->
+          <div class="book-chapter-tabs" id="book-chapter-tabs">
+            <div class="chapter-tab tab-gold active-tab" id="tab-particles" onclick="turnBookPage('particles')" title="Rozdział I: Złote Partykuły">
+              <span class="tab-roman">I</span>
+            </div>
+            <div class="chapter-tab tab-fire" id="tab-tenses" onclick="turnBookPage('tenses')" title="Rozdział II: Władza nad Czasem">
+              <span class="tab-roman">II</span>
+            </div>
+            <div class="chapter-tab tab-nature" id="tab-other" onclick="turnBookPage('other')" title="Rozdział III: Inne Prawa Magii">
+              <span class="tab-roman">III</span>
+            </div>
+            <div class="chapter-tab tab-toc" id="tab-toc" onclick="turnBookPage('toc')" title="Spis Treści">
+              <span class="tab-roman">✦</span>
+            </div>
+          </div>
+
+          <div class="bookmark-ribbon" id="bookmark-ribbon"></div>
+          <div class="g-particles" id="book-particles"></div>
+          
+          <div class="g-pages-stack">
+            <!-- Lewa Strona (Spis Treści) -->
+            <div class="g-page-inner g-page-left">
+              <div class="g-inner-border"></div>
+              <div class="g-corner tl"></div><div class="g-corner br"></div>
+              
+              <!-- Page number left -->
+              <div class="page-number page-number-left">i</div>
+
+              <div class="g-toc-title">Spis Treści</div>
+              <button class="toc-btn active-chap" id="btn-chap-particles" onclick="turnBookPage('particles')">
+                <span class="toc-number">I.</span> Złote Partykuły
+                <span class="toc-dots"></span>
+                <span class="toc-pg">1</span>
+              </button>
+              <button class="toc-btn" id="btn-chap-tenses" onclick="turnBookPage('tenses')">
+                <span class="toc-number">II.</span> Władza nad Czasem
+                <span class="toc-dots"></span>
+                <span class="toc-pg">7</span>
+              </button>
+              <button class="toc-btn" id="btn-chap-other" onclick="turnBookPage('other')">
+                <span class="toc-number">III.</span> Inne Prawa Magii
+                <span class="toc-dots"></span>
+                <span class="toc-pg">14</span>
+              </button>
+
+              <!-- Ozdobny tekst w stopce lewej strony -->
+              <div class="page-footer-left">
+                <div class="page-footer-text">Nihongo Arcana Codex</div>
+                <div class="page-footer-seal" id="toc-seal">魔</div>
+              </div>
+            </div>
+            
+            <div class="g-center-shadow"></div>
+            
+            <!-- Prawa Strona (Treść - Widoczna) -->
+            <div class="g-page-inner g-page-right" id="g-content-container">
+              <div class="g-inner-border"></div>
+              <div class="book-watermark" id="book-watermark">✧</div>
+              <div id="g-content-area"></div>
+              <!-- Page number right -->
+              <div class="page-number page-number-right" id="page-number-right">1</div>
+            </div>
+            
+            <!-- Prawa Strona (Obracająca się przy kliknięciu) -->
+            <div class="g-flip-page" id="g-flip-page" style="display:none;">
+              <div class="g-flip-front" id="g-front">
+                 <div class="g-inner-border"></div>
+              </div>
+              <div class="g-flip-back" id="g-back">
+                 <div class="g-inner-border"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRA (DOJO) -->
+  <div class="page" id="page-dojo">
+    <div class="section-title">⚔️ Próba Dojo</div>
+    <div class="section-subtitle">Wkrocz na arenę. Mistrzyni Akemi przetestuje twoją wiedzę.</div>
+    
+    <div class="dojo-container">
+      <div class="dojo-overlay" id="dojo-overlay">
+        <h2>Próba Magini</h2>
+        <p style="color:#d8b4fe; font-size:18px; margin-bottom:30px; font-family:'Lora', serif;">Wybierz rodzaj próby:</p>
+        <div class="dojo-mode-select expanded">
+          <button class="dojo-mode-btn" onclick="startDojo('words')">
+            <div class="dojo-mode-icon">📚</div>
+            <div class="dojo-mode-title">Trening Słówek</div>
+            <div class="dojo-mode-desc">Rozpoznaj romaji pasujące do polskiego słowa</div>
+          </button>
+          <button class="dojo-mode-btn" onclick="startDojo('grammar')">
+            <div class="dojo-mode-icon">✦</div>
+            <div class="dojo-mode-title">Zadania Gramatyczne</div>
+            <div class="dojo-mode-desc">Sprawdź znajomość partykuł, form, szyku</div>
+          </button>
+          <button class="dojo-mode-btn" onclick="startDojo('forge')">
+            <div class="dojo-mode-icon">🔨</div>
+            <div class="dojo-mode-title">Kuźnia Zaklęć</div>
+            <div class="dojo-mode-desc">Wykuj odpowiedź własnoręcznie. Żadnych opcji!</div>
+          </button>
+          <button class="dojo-mode-btn" onclick="startDojo('echo')">
+            <div class="dojo-mode-icon">👂</div>
+            <div class="dojo-mode-title">Echo Wyroczni</div>
+            <div class="dojo-mode-desc">Wsłuchaj się i zapisz szept Akemi</div>
+          </button>
+        </div>
+        <div class="hardcore-toggle" id="hardcore-toggle" onclick="toggleHardcore()">
+          <div class="hardcore-checkbox" id="hardcore-check"></div>
+          <div class="hardcore-text">
+            <div class="hardcore-title">💀 Tryb Hardcore</div>
+            <div class="hardcore-desc">Masz tylko 3 życia. Trzy błędy = śmierć bohatera i utrata połowy wyniku. Tylko dla odważnych.</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- EKRAN NAGRODY (pokazuje się po 5 poprawnych) -->
+      <div class="dojo-reward-overlay" id="dojo-reward-overlay" style="display:none;">
+        <div class="reward-badge">✨</div>
+        <h2 id="reward-title">Wielka Magini jest z ciebie dumna!</h2>
+        <div class="reward-content" id="reward-content"></div>
+        <div style="display:flex; gap:15px; margin-top:30px;">
+          <button class="dojo-start-btn" onclick="continueDojo()">Kontynuuj próbę</button>
+          <button class="dojo-start-btn" style="background: #4c1d95;" onclick="endDojo()">Zakończ</button>
+        </div>
+      </div>
+      
+      <!-- 💀 GAME OVER (hardcore) -->
+      <div class="gameover-overlay" id="gameover-overlay">
+        <div class="gameover-title">GAME OVER</div>
+        <div class="gameover-subtitle">死</div>
+        <div class="gameover-stats" id="gameover-stats"></div>
+        <div style="display:flex; gap:15px;">
+          <button class="dojo-start-btn" onclick="restartDojo()">Wskrzeszenie</button>
+          <button class="dojo-start-btn" style="background: #4c1d95;" onclick="endDojo()">Odpocznij</button>
+        </div>
+      </div>
+      
+      <div class="dojo-header">
+        <div class="dojo-stats">Wynik: <span id="dojo-score" style="color:#f5d97a">0</span></div>
+        <div class="dojo-stats" id="dojo-mode-label" style="color:#c084fc; font-size:16px;">-</div>
+        <div class="dojo-stats">Combo: <span id="dojo-combo" style="color:#6ee7b7">x0</span></div>
+      </div>
+      
+      <!-- 💀 Serca hardcore -->
+      <div class="hardcore-lives" id="hardcore-lives" style="display:none;">
+        <div class="hardcore-life" data-life="1">❤️</div>
+        <div class="hardcore-life" data-life="2">❤️</div>
+        <div class="hardcore-life" data-life="3">❤️</div>
+      </div>
+      
+      <div class="dojo-mana-bar"><div class="dojo-mana-fill" id="dojo-mana"></div></div>
+      
+      <div class="dojo-question-box" id="dojo-question-box">
+        <div class="dojo-q-pl" id="dojo-pl">Wczytywanie...</div>
+        <div class="dojo-q-hint" id="dojo-hint">Wybierz poprawne tłumaczenie:</div>
+      </div>
+      
+      <!-- 🔨 KUŹNIA input -->
+      <div class="forge-input-wrap" id="forge-input-wrap" style="display:none;">
+        <div class="forge-input-label" id="forge-input-label">✦ Wykuj swoje zaklęcie ✦</div>
+        <input type="text" class="forge-input" id="forge-input" placeholder="Wpisz tutaj..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter'){forgeSubmit();event.preventDefault();}">
+        <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+          <button class="forge-submit" onclick="forgeSubmit()">⚒️ Wykuj odpowiedź</button>
+          <button class="forge-hint-btn" onclick="forgeShowHint()">💡 Podpowiedź (-5 pkt)</button>
+        </div>
+        <div class="forge-hint-reveal" id="forge-hint-reveal"></div>
+      </div>
+      
+      <!-- 👂 ECHO ORACLE speaker -->
+      <div class="echo-speaker-wrap" id="echo-speaker-wrap" style="display:none;">
+        <div class="echo-icon" id="echo-icon">👁</div>
+        <div class="echo-prompt">Akemi szepce ci coś po japońsku. Wsłuchaj się, potem zapisz.</div>
+        <button class="echo-btn-play" id="echo-btn-play" onclick="echoPlaySample()">🔊 Usłysz Wyrocznię</button>
+        <div class="echo-replay-count" id="echo-replay-count">Pozostałe odsłuchy: 3</div>
+      </div>
+      
+      <div class="dojo-answers" id="dojo-answers">
+        <button class="dojo-btn">Opcja 1</button>
+        <button class="dojo-btn">Opcja 2</button>
+        <button class="dojo-btn">Opcja 3</button>
+        <button class="dojo-btn">Opcja 4</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🗡️ KIAI - Trening Wymowy -->
+  <div class="page" id="page-kiai">
+    <div class="section-title">🗡️ Kiai — Krzyk Bojowy</div>
+    <div class="section-subtitle">Wymów słowo głośno. Akemi oceni twój ducha. Wymagany mikrofon i Chrome/Edge.</div>
+    
+    <div class="kiai-container">
+      <div class="kiai-hero">
+        <div class="kiai-title-jp">気合</div>
+        <div class="kiai-title-pl">Kiai — Duch Słowa</div>
+        <div class="kiai-lore">"Kiai" to pradawny krzyk bojowy samurajów, który skupiał całą siłę wojownika w jednym słowie. Wymów japońskie słowo z taką precyzją, by przywołać jego ducha. System nasłuchuje twojego głosu i ocenia wymowę.</div>
+      </div>
+      
+      <div class="kiai-mode-select">
+        <div class="kiai-mode-btn active" data-kiai-mode="easy" onclick="setKiaiMode('easy')">
+          <div class="kiai-mode-icon">🌱</div>
+          <div class="kiai-mode-name">Szept Adepta</div>
+          <div class="kiai-mode-desc">Pojedyncze słowa</div>
+        </div>
+        <div class="kiai-mode-btn" data-kiai-mode="medium" onclick="setKiaiMode('medium')">
+          <div class="kiai-mode-icon">⚔️</div>
+          <div class="kiai-mode-name">Głos Wojownika</div>
+          <div class="kiai-mode-desc">Krótkie frazy</div>
+        </div>
+        <div class="kiai-mode-btn" data-kiai-mode="hard" onclick="setKiaiMode('hard')">
+          <div class="kiai-mode-icon">🔥</div>
+          <div class="kiai-mode-name">Ryk Mistrza</div>
+          <div class="kiai-mode-desc">Pełne zdania</div>
+        </div>
+      </div>
+      
+      <div class="kiai-arena">
+        <div class="kiai-target">
+          <div class="kiai-target-label">✦ Przywołaj ducha słowa ✦</div>
+          <div class="kiai-target-jp" id="kiai-target-jp">—</div>
+          <div class="kiai-target-romaji" id="kiai-target-romaji">—</div>
+          <div class="kiai-target-pl" id="kiai-target-pl">—</div>
+        </div>
+        
+        <div class="kiai-mic-indicator" id="kiai-mic-indicator">
+          <div class="kiai-mic-bar"></div><div class="kiai-mic-bar"></div><div class="kiai-mic-bar"></div>
+          <div class="kiai-mic-bar"></div><div class="kiai-mic-bar"></div><div class="kiai-mic-bar"></div>
+          <div class="kiai-mic-bar"></div>
+        </div>
+        
+        <div class="kiai-controls">
+          <button class="kiai-btn listen" onclick="kiaiListenSample()">🔊 Posłuchaj Mistrzyni</button>
+          <button class="kiai-btn record" id="kiai-record-btn" onclick="kiaiToggleRecord()">🎤 Wypowiedz Kiai</button>
+          <button class="kiai-btn next" onclick="kiaiNext()">➜ Następne</button>
+        </div>
+        
+        <div class="kiai-result" id="kiai-result"></div>
+        
+        <div class="kiai-stats">
+          <div class="kiai-stat">
+            <div class="kiai-stat-value" id="kiai-stat-attempts">0</div>
+            <div class="kiai-stat-label">Próby</div>
+          </div>
+          <div class="kiai-stat">
+            <div class="kiai-stat-value" id="kiai-stat-best">—</div>
+            <div class="kiai-stat-label">Najlepszy wynik</div>
+          </div>
+          <div class="kiai-stat">
+            <div class="kiai-stat-value" id="kiai-stat-avg">—</div>
+            <div class="kiai-stat-label">Średnia</div>
+          </div>
+          <div class="kiai-stat">
+            <div class="kiai-stat-value" id="kiai-stat-streak">0</div>
+            <div class="kiai-stat-label">Seria 80%+</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KREATOR ZDAŃ -->
+  <div class="page" id="page-zdania">
+    <div class="section-title">✏️ Stół Alchemiczny</div>
+    <div class="section-subtitle">Składaj słowa w zaklęcia. Mistrzyni cię oceni!</div>
+    <div style="max-width:900px; margin: 0 auto;">
+      <div class="builder">
+        <h2>📜 Formuła Zaklęcia</h2>
+        <div style="font-size:14px;color:#d8b4fe;margin-bottom:15px;line-height:1.8;padding:15px 20px;background:rgba(0,0,0,.5);border-radius:8px;border:1px solid rgba(147,51,234,.4)">
+          Schemat pradawny: <b style="color:var(--theme-glow)">Podmiot + wa</b> → <b style="color:var(--theme-glow)">Dopełnienie + wo</b> → <b style="color:var(--theme-glow)">Czasownik</b>
+        </div>
+        <div class="slot-row" id="slot-row"></div>
+        <div id="result-box" style="display:none" class="result-box">
+          <div class="result-jp" id="result-jp"></div>
+          <div class="result-pl" id="result-pl"></div>
+          <div class="result-acts">
+            <button class="btn primary" onclick="speakText(document.getElementById('result-jp').textContent)">🔊 Wymów</button>
+            <button class="btn" onclick="autoOrderSentence()">✨ Wymuś SOV</button>
+            <button class="btn arcane" onclick="checkSyntaxLocal()" id="syntax-btn">🔮 Sprawdź składnię</button>
+            <button class="btn danger" onclick="clearSlots()">🗑️ Wyczyść</button>
+          </div>
+          <div id="correction-area"></div>
+        </div>
+      </div>
+      <div class="builder">
+        <h2>📦 Bank Słów (Szukaj po polsku)</h2>
+        <div class="search-wrap" style="margin-bottom: 20px;"><span class="s-icon">🔍</span><input type="text" id="builder-search" placeholder="Wpisz np. jabłko, jeść, ja..." oninput="filterWordBank()"></div>
+        <div id="word-bank-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT — Mistrzyni -->
+  <div class="page" id="page-chat">
+    <div class="section-title">🔮 Mistrzyni Akemi</div>
+    <div class="section-subtitle">Wielka Magini Biblioteki. Wertuje zwoje wektorowe (RAG) — a gdy jej mózg w Pythonie milczy, przywołuje lokalną magię.</div>
+    <div class="chat-container-main">
+      <div class="akemi-portrait">
+        <video src="filmik2.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;object-position:center top;display:block;"></video>
+        <div class="akemi-name-tag"><h3>Mistrzyni Akemi</h3><p>Strażniczka Arkanów (Lokalna Magia)</p></div>
+      </div>
+      <div class="chat-layout">
+        <div class="chat-msgs" id="chat-msgs">
+          <div class="msg bot">
+            <div class="msg-avatar"><img src="https://image.pollinations.ai/prompt/Dark%20fantasy%20anime%20female%20wizard%20shadows%20purple%20magic%20intricate%20details%20masterpiece%20dark%20aesthetic%20witch%20hat?width=100&height=100&nologo=true" alt="Akemi"></div>
+            <div>
+              <div class="msg-bubble">
+                *Zamyka świetlistą księgę i spogląda na ciebie z mroku*<br><br>
+                Witaj, adepcie. Jestem <b>Akemi</b>. Działam tu lokalnie i nigdy nie rzucam słów na wiatr (zero halucynacji).<br><br>
+                Napisz do mnie np.: <b>"przetłumacz zdanie ja jem jabłko"</b>. Ułożę to w szyku SOV. Możesz też zapytać o różnicę między <i>wa</i> i <i>ga</i> lub poprosić o ciekawostkę!
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 🔮 PASEK OKA WYROCZNI -->
+        <div class="oracle-bar" id="oracle-bar">
+          <div class="oracle-toggle-wrapper" id="oracle-toggle" onclick="toggleOracle()">
+            <div class="oracle-eye" id="oracle-eye"></div>
+            <span class="oracle-label">🔮 Oko Wyroczni</span>
+          </div>
+          <div class="oracle-status" id="oracle-status">Lokalna magia · zero halucynacji</div>
+          <button class="oracle-key-btn" onclick="openKeyModal()" title="Wpisz / zmień klucz Gemini API">🔑 Klucz API</button>
+        </div>
+        <div class="quick-btns-container">
+          <div class="quick-btns-scroll">
+            <button class="qb" onclick="quickMsg('Przetłumacz zdanie: ja jem jabłko')">🍎 Tłumacz: jem jabłko</button>
+            <button class="qb" onclick="quickMsg('Jak działają przymiotniki i- oraz na-?')">📚 Przymiotniki</button>
+            <button class="qb" onclick="quickMsg('Opowiedz mi legendę o kitsune')">🦊 Lore: Kitsune</button>
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <textarea class="chat-input" id="chat-input" placeholder="Napisz do Mistrzyni..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg()}"></textarea>
+          <button class="chat-send" id="chat-send" onclick="sendMsg()">Wyślij</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAPA ŚWIATA -->
+  <div class="page" id="page-mapa">
+    <div class="section-title">🗺️ Droga Bohatera</div>
+    <div class="section-subtitle">Każde słowo to krok, każda pokonana próba to odblokowana kraina. Poznaj świat Nihongo.</div>
+    <div class="world-map-wrapper">
+      <div class="hero-status-bar">
+        <div class="hero-stat">
+          <div class="hero-stat-label">Moc Adepta</div>
+          <div class="hero-stat-value"><span id="hero-power">0</span></div>
+        </div>
+        <div class="hero-power-bar"><div class="hero-power-fill" id="hero-power-fill"></div></div>
+        <div class="hero-stat" style="text-align:right;">
+          <div class="hero-stat-label">Regiony zdobyte</div>
+          <div class="hero-stat-value"><span id="regions-conquered">0</span> / 7</div>
+        </div>
+      </div>
+      <div class="map-svg-container" id="map-container">
+        <svg class="map-svg" viewBox="0 0 1000 620" xmlns="http://www.w3.org/2000/svg" id="world-map-svg">
+          <defs>
+            <filter id="mapGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g id="map-paths" stroke="#8b6914" stroke-width="3" stroke-dasharray="6,8" fill="none" opacity="0.5"></g>
+          <g id="map-regions"></g>
+        </svg>
+        <div class="map-tooltip" id="map-tooltip"></div>
+      </div>
+    </div>
+    <div class="region-detail-overlay" id="region-detail">
+      <div class="region-detail-card" id="region-detail-card">
+        <button class="region-close" onclick="closeRegionDetail()">✕</button>
+        <div id="region-detail-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ZWOJE MĄDROŚCI -->
+  <div class="page" id="page-zwoje">
+    <div class="section-title">🎴 Zwoje Mądrości</div>
+    <div class="section-subtitle">Pradawne opowieści zapisane w runach Nihongo. Czytaj, poznawaj, zachowuj słowa w Skarbcu.</div>
+    <div class="scrolls-container">
+      <div class="scrolls-intro">
+        ✦ Każdy zwój to krótka opowieść w klimacie isekai. <b>Kliknij na podkreślone słowo</b> by zobaczyć tłumaczenie i dodać je do Skarbca. Mistrzyni Akemi przetłumaczy ci całość na koniec.
+      </div>
+      <div class="scrolls-grid" id="scrolls-grid"></div>
+    </div>
+    <div class="scroll-reader-overlay" id="scroll-reader-overlay">
+      <div class="scroll-reader" id="scroll-reader">
+        <button class="scroll-reader-close" onclick="closeScrollReader()">✕</button>
+        <div id="scroll-reader-content"></div>
+      </div>
+    </div>
+    <div class="word-tooltip" id="word-tooltip"></div>
+  </div>
+
+  <!-- 🎭 SCENY ROLEPLAY -->
+  <div class="page" id="page-sceny">
+    <div class="section-title">🎭 Sceny Roleplay</div>
+    <div class="section-subtitle">Wciel się w bohatera. Akemi gra postać, a ty rozmawiasz po japońsku. Nauka przez immersję.</div>
+    
+    <div class="scenes-container">
+      <div class="scenes-intro" id="scenes-intro-text">
+        ✦ <b>Wybierz scenę</b> by wcielić się w awanturnika. Akemi przywdzieje rolę i odpowie po japońsku z tłumaczeniem. Możesz pisać po polsku lub po japońsku — postać zrozumie i poprowadzi rozmowę. Każda scena ma <b>sugestie odpowiedzi</b> i przycisk <b>"Pomóż"</b> jeśli się zgubisz.<br><br>
+        🔮 <b>Wymaga Oka Wyroczni</b> (klucz Gemini API). Włącz w zakładce Mistrzyni jeśli jeszcze nie masz.
+      </div>
+      
+      <div class="scenes-grid" id="scenes-grid"></div>
+      
+      <!-- Scena pełnoekranowa -->
+      <div class="scene-stage" id="scene-stage">
+        <div class="scene-header-bar" id="scene-header-bar"></div>
+        <div class="scene-context-panel" id="scene-context-panel"></div>
+        <div class="scene-messages" id="scene-messages"></div>
+        <div class="scene-input-area" id="scene-input-area">
+          <div class="scene-suggestions" id="scene-suggestions"></div>
+          <div class="scene-input-row">
+            <textarea class="scene-input" id="scene-input" rows="1" placeholder="Wpisz odpowiedź (po polsku lub japońsku)..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sceneSend();}"></textarea>
+            <button class="scene-help-btn" onclick="sceneHelp()" title="Akemi pomoże ci ułożyć odpowiedź">💡 Pomóż</button>
+            <button class="scene-send-btn" id="scene-send-btn" onclick="sceneSend()">Wyślij</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔑 MODAL KLUCZA GEMINI -->
+  <div class="key-modal-overlay" id="key-modal-overlay">
+    <div class="key-modal">
+      <div class="key-modal-icon">🔑</div>
+      <div class="key-modal-title">Kryształ Mocy</div>
+      <div class="key-modal-subtitle">Wpisz klucz Gemini API by otworzyć Oko Wyroczni</div>
+      
+      <div class="key-modal-info">
+        🌐 Klucz uzyskasz <b>za darmo</b> na <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a> (potrzebne konto Google).<br><br>
+        🔒 Klucz zapisuje się <b>tylko w twojej przeglądarce</b> (localStorage). Anthropic ani nikt inny go nie widzi.
+      </div>
+      
+      <input type="password" class="key-modal-input" id="key-modal-input" placeholder="Wklej tutaj klucz API (zaczyna się od AIza...)" autocomplete="off">
+      
+      <div class="key-modal-checkbox-row">
+        <input type="checkbox" id="key-show-toggle" onchange="document.getElementById('key-modal-input').type=this.checked?'text':'password'">
+        <label for="key-show-toggle">Pokaż klucz</label>
+      </div>
+      
+      <div class="key-modal-actions">
+        <button class="key-modal-btn cancel" onclick="closeKeyModal()">Anuluj</button>
+        <button class="key-modal-btn confirm" onclick="saveOracleKey()">✦ Zapisz klucz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ULUBIONE -->
+  <div class="page" id="page-gildia">
+    <div class="section-title">🏛️ Gildia Adepta</div>
+    <div class="section-subtitle">Twoje centrum dowodzenia. Powtarzaj słówka, śledź postępy, zarządzaj Skarbcem.</div>
+    
+    <!-- DZIENNE WYZWANIE BANNER -->
+    <div class="guild-daily-banner" id="guild-daily-banner"></div>
+    
+    <div class="fav-tabs guild-tabs">
+      <div class="fav-tab active" onclick="showGuildTab('karta')">🎴 Karta Gildii</div>
+      <div class="fav-tab" onclick="showGuildTab('srs')">🃏 Powtórki <span class="srs-due-badge" id="srs-due-badge">0</span></div>
+      <div class="fav-tab" onclick="showGuildTab('dashboard')">📊 Dashboard</div>
+      <div class="fav-tab" onclick="showGuildTab('klasy')">⚔️ Klasy</div>
+      <div class="fav-tab" onclick="showGuildTab('skarbiec')">⭐ Skarbiec (<span id="ct-slowa">0</span>)</div>
+    </div>
+    
+    <!-- 🎴 KARTA GILDII -->
+    <div class="guild-section" id="guild-karta">
+      <div id="guild-card-root"></div>
+    </div>
+    <div class="gc-modal-overlay" id="gc-modal-overlay">
+      <div class="gc-modal">
+        <h2>✦ Edytuj Kartę Gildii ✦</h2>
+        <p>Ustaw imię, awatar i motto bohatera</p>
+        <div style="margin-bottom:15px;"><div class="gc-modal-label">IMIĘ ADEPTA</div>
+          <input type="text" class="gc-modal-input" id="gc-modal-name" maxlength="30" placeholder="np. Shirou, Ciemny Wilk..."></div>
+        <div style="margin-bottom:15px;"><div class="gc-modal-label">AWATAR</div>
+          <div class="gc-modal-avatars" id="gc-modal-avatars"></div></div>
+        <div style="margin-bottom:20px;"><div class="gc-modal-label">MOTTO</div>
+          <input type="text" class="gc-modal-input" id="gc-modal-motto" maxlength="60" placeholder="np. Siła płynie z wiedzy"></div>
+        <div class="gc-modal-actions">
+          <button class="gc-modal-btn cancel" onclick="closeGcEditModal()">Anuluj</button>
+          <button class="gc-modal-btn confirm" onclick="saveGcEdit()">✦ Zapisz</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 🃏 SRS POWTÓRKI -->
+    <div class="guild-section" id="guild-srs">
+      <div class="srs-stats-row" id="srs-stats-row"></div>
+      <div class="srs-card-area" id="srs-card-area"></div>
+    </div>
+    
+    <!-- ⚔️ KLASY -->
+    <div class="guild-section" id="guild-klasy" style="display:none;">
+      <div id="guild-class-system"></div>
+    </div>
+    
+    <!-- 📊 DASHBOARD -->
+    <div class="guild-section" id="guild-dashboard" style="display:none;"></div>
+    
+    <!-- ⭐ SKARBIEC (legacy) -->
+    <div class="guild-section" id="guild-skarbiec" style="display:none;">
+      <div id="fav-content"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Dane słówek i konfiguracji -->
+<script src="data.js"></script>
+<!-- Logika aplikacji -->
+<script src="app.js"></script>
+<!-- Tryb Manga -->
+<script src="manga.js"></script>
+</body>
+</html>

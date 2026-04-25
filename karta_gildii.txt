@@ -1,0 +1,316 @@
+═══════════════════════════════════════════════════════════════
+🎴 KARTA GILDII — wszystko w jednym miejscu
+═══════════════════════════════════════════════════════════════
+
+Masz 3 kawałki do wklejenia. Każdy idzie w konkretne miejsce.
+Ctrl+F pomaga znaleźć właściwe linie.
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║ [1/3] index.html — 2 małe zmiany                              ║
+╚═══════════════════════════════════════════════════════════════╝
+
+┌─ A) Dodaj zakładkę "Karta" w <div class="fav-tabs guild-tabs">
+│   (Ctrl+F: "showGuildTab('srs')" — ok. linia 653)
+│
+│   Wstaw jako PIERWSZY tab, przed "Powtórki":
+
+      <div class="fav-tab" onclick="showGuildTab('karta')">🎴 Karta</div>
+
+└─ B) Dodaj sekcję karty + modal (Ctrl+F: "<!-- 🃏 SRS POWTÓRKI -->")
+      PRZED tym komentarzem wklej:
+
+<!-- 🎴 KARTA GILDII -->
+<div class="guild-section" id="guild-karta" style="display:none;">
+  <div id="guild-card-root"></div>
+</div>
+<div class="gc-modal-overlay" id="gc-modal-overlay">
+  <div class="gc-modal">
+    <h2>✦ Edytuj Kartę Gildii ✦</h2>
+    <p>Ustaw imię, awatar i motto bohatera</p>
+    <div style="margin-bottom:15px;"><div class="gc-modal-label">IMIĘ ADEPTA</div>
+      <input type="text" class="gc-modal-input" id="gc-modal-name" maxlength="30" placeholder="np. Shirou, Ciemny Wilk..."></div>
+    <div style="margin-bottom:15px;"><div class="gc-modal-label">AWATAR</div>
+      <div class="gc-modal-avatars" id="gc-modal-avatars"></div></div>
+    <div style="margin-bottom:20px;"><div class="gc-modal-label">MOTTO</div>
+      <input type="text" class="gc-modal-input" id="gc-modal-motto" maxlength="60" placeholder="np. Siła płynie z wiedzy"></div>
+    <div class="gc-modal-actions">
+      <button class="gc-modal-btn cancel" onclick="closeGcEditModal()">Anuluj</button>
+      <button class="gc-modal-btn confirm" onclick="saveGcEdit()">✦ Zapisz</button>
+    </div>
+  </div>
+</div>
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║ [2/3] style.css — wklej na SAMYM KOŃCU pliku                  ║
+╚═══════════════════════════════════════════════════════════════╝
+
+/* ========== 🎴 KARTA GILDII ========== */
+#guild-karta { padding: 20px 0; }
+.guild-card { position:relative; max-width:900px; margin:0 auto; padding:50px 60px 70px;
+  background:radial-gradient(ellipse at center,#f4e4bc 0%,#e6cd8f 50%,#c9a961 100%);
+  border-radius:4px; color:#3a2010; font-family:'Lora',serif; overflow:hidden;
+  box-shadow:0 0 0 2px #8b6914,0 0 0 4px #3a2010,0 0 60px rgba(212,175,55,.3),0 20px 60px rgba(0,0,0,.7),inset 0 0 120px rgba(139,105,20,.4);
+  clip-path:polygon(2% 1%,8% 0%,15% 2%,25% 0%,35% 1%,45% 0%,55% 1%,65% 0%,75% 2%,85% 0%,92% 1%,98% 0%,99% 5%,100% 15%,99% 25%,100% 35%,99% 45%,100% 55%,99% 65%,100% 75%,99% 85%,100% 95%,98% 99%,92% 100%,85% 99%,75% 100%,65% 99%,55% 100%,45% 99%,35% 100%,25% 99%,15% 100%,8% 99%,2% 100%,1% 95%,0% 85%,1% 75%,0% 65%,1% 55%,0% 45%,1% 35%,0% 25%,1% 15%,0% 5%);
+}
+.guild-card::before { content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:radial-gradient(circle at 12% 20%,rgba(139,69,19,.15) 0%,transparent 15%),radial-gradient(circle at 88% 80%,rgba(139,69,19,.12) 0%,transparent 18%),radial-gradient(circle at 75% 25%,rgba(101,50,10,.1) 0%,transparent 12%),radial-gradient(circle at 20% 75%,rgba(139,69,19,.08) 0%,transparent 20%); }
+.guild-card::after { content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background-image:repeating-linear-gradient(0deg,transparent 0,transparent 2px,rgba(139,105,20,.03) 2px,rgba(139,105,20,.03) 3px),repeating-linear-gradient(90deg,transparent 0,transparent 2px,rgba(101,50,10,.02) 2px,rgba(101,50,10,.02) 3px); }
+.gc-corner { position:absolute; width:60px; height:60px; z-index:2; pointer-events:none; }
+.gc-corner.tl { top:15px; left:15px; } .gc-corner.tr { top:15px; right:15px; transform:scaleX(-1); }
+.gc-corner.bl { bottom:15px; left:15px; transform:scaleY(-1); } .gc-corner.br { bottom:15px; right:15px; transform:scale(-1); }
+.gc-corner::before,.gc-corner::after { content:''; position:absolute; background:linear-gradient(135deg,#d4af37 0%,#8b6914 100%); }
+.gc-corner::before { width:40px; height:2px; top:8px; left:0; box-shadow:0 0 4px rgba(212,175,55,.8); }
+.gc-corner::after { width:2px; height:40px; top:0; left:8px; box-shadow:0 0 4px rgba(212,175,55,.8); }
+.gc-corner-ornament { position:absolute; top:4px; left:4px; width:12px; height:12px; border:2px solid #8b6914; border-radius:50%; background:radial-gradient(circle,#d4af37 0%,#8b6914 100%); box-shadow:0 0 8px rgba(212,175,55,.6); }
+.gc-header { position:relative; text-align:center; z-index:1; margin-bottom:30px; padding-bottom:20px; border-bottom:3px double #8b6914; }
+.gc-header-top { font-family:'Cinzel',serif; font-size:13px; letter-spacing:8px; color:#6b4a1a; margin-bottom:8px; text-transform:uppercase; }
+.gc-header-main { font-family:'Cinzel',serif; font-size:38px; color:#3a2010; margin:0; text-shadow:2px 2px 4px rgba(139,105,20,.4); letter-spacing:2px; font-weight:900; }
+.gc-header-jp { font-family:'Noto Serif JP',serif; color:#8b2020; font-size:22px; margin-top:4px; letter-spacing:6px; }
+.gc-header-sub { font-style:italic; color:#5a3820; font-size:13px; margin-top:10px; letter-spacing:2px; }
+.gc-edit-fab { position:absolute; top:20px; right:20px; width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:18px; z-index:3; transition:all .2s;
+  background:linear-gradient(135deg,#d4af37,#8b6914); color:#1a0535; border:2px solid #3a2010; box-shadow:0 4px 12px rgba(0,0,0,.4); }
+.gc-edit-fab:hover { transform:scale(1.15) rotate(15deg); box-shadow:0 6px 20px rgba(212,175,55,.6); }
+.gc-identity-row { display:grid; grid-template-columns:160px 1fr auto; gap:30px; align-items:center; position:relative; z-index:1; margin-bottom:30px; }
+.gc-avatar-box { position:relative; width:160px; height:160px; }
+.gc-avatar-frame { width:100%; height:100%; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:75px; position:relative; cursor:pointer; transition:transform .3s,box-shadow .3s;
+  background:radial-gradient(circle,#2a1055 0%,#1a0535 70%,#0a0020 100%); border:4px solid #8b6914;
+  box-shadow:0 0 0 2px #d4af37,0 0 0 4px #3a2010,0 0 30px rgba(212,175,55,.4),inset 0 0 40px rgba(168,85,247,.3); }
+.gc-avatar-frame:hover { transform:scale(1.05) rotate(5deg); box-shadow:0 0 0 2px #d4af37,0 0 0 4px #3a2010,0 0 50px rgba(212,175,55,.7),inset 0 0 40px rgba(168,85,247,.5); }
+.gc-avatar-badge { position:absolute; bottom:-5px; right:-5px; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:24px;
+  background:linear-gradient(135deg,#d4af37 0%,#8b6914 100%); border:3px solid #3a2010; box-shadow:0 4px 15px rgba(0,0,0,.5); }
+.gc-edit-hint { position:absolute; bottom:-24px; left:50%; transform:translateX(-50%); font-size:10px; color:#6b4a1a; font-style:italic; white-space:nowrap; opacity:.7; }
+.gc-info { display:flex; flex-direction:column; gap:6px; }
+.gc-info-label { font-size:11px; color:#6b4a1a; letter-spacing:3px; text-transform:uppercase; font-family:'Cinzel',serif; }
+.gc-info-name { font-family:'Cinzel',serif; font-weight:900; font-size:30px; color:#3a2010; margin:0; line-height:1.1; cursor:pointer; padding:2px 8px; border-radius:4px; transition:background .2s; display:inline-flex; align-items:center; gap:10px; }
+.gc-info-name:hover { background:rgba(139,105,20,.15); }
+.gc-info-name-edit { font-size:14px; color:#8b6914; opacity:.5; }
+.gc-info-title { font-family:'Cinzel',serif; font-size:16px; color:#8b2020; font-style:italic; }
+.gc-info-title b { color:#6b2050; font-weight:bold; }
+.gc-info-motto { font-style:italic; font-size:13px; color:#5a3820; padding:6px 10px; background:rgba(139,105,20,.1); border-left:3px solid #8b6914; margin-top:4px; cursor:pointer; transition:background .2s; }
+.gc-info-motto:hover { background:rgba(139,105,20,.2); }
+.gc-id-box { text-align:center; padding:8px 16px; border:2px solid #8b6914; border-radius:4px; background:rgba(212,175,55,.15); }
+.gc-id-label { font-size:10px; color:#6b4a1a; letter-spacing:2px; margin-bottom:4px; }
+.gc-id-num { font-family:'Noto Serif JP',serif; font-size:22px; color:#3a2010; font-weight:900; letter-spacing:2px; }
+.gc-id-joined { font-size:10px; color:#6b4a1a; margin-top:6px; font-style:italic; }
+.gc-paths { position:relative; z-index:1; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:25px; }
+.gc-path { background:linear-gradient(135deg,rgba(255,250,230,.5) 0%,rgba(230,205,143,.6) 100%); border:2px solid var(--path-color,#8b6914); border-radius:6px; padding:14px; position:relative; overflow:hidden; }
+.gc-path.is-dominant { background:linear-gradient(135deg,rgba(255,250,230,.7) 0%,rgba(250,225,170,.8) 100%);
+  box-shadow:0 0 0 2px #d4af37,0 0 25px var(--path-color,#d4af37),inset 0 0 20px rgba(255,250,230,.5); }
+.gc-path.is-dominant::before { content:'★ AKTYWNA ★'; position:absolute; top:6px; right:6px; font-size:9px; color:var(--path-color); font-weight:900; letter-spacing:1px; background:rgba(58,32,16,.9); padding:2px 6px; border-radius:2px; }
+.gc-path-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.gc-path-icon { font-size:32px; filter:drop-shadow(0 2px 3px rgba(0,0,0,.3)); }
+.gc-path-info { flex:1; }
+.gc-path-name { font-family:'Cinzel',serif; font-size:13px; color:#6b4a1a; letter-spacing:2px; margin-bottom:2px; }
+.gc-path-rank { font-family:'Cinzel',serif; font-size:16px; color:var(--path-color,#3a2010); font-weight:900; text-shadow:1px 1px 2px rgba(139,105,20,.3); }
+.gc-path-bar { height:8px; background:rgba(58,32,16,.2); border-radius:4px; overflow:hidden; position:relative; border:1px solid rgba(139,105,20,.5); }
+.gc-path-fill { height:100%; background:linear-gradient(90deg,var(--path-color),var(--path-color-light,#fff)); border-radius:4px; box-shadow:0 0 8px var(--path-color); transition:width .8s ease; }
+.gc-path-pts { display:flex; justify-content:space-between; font-size:11px; color:#5a3820; margin-top:6px; }
+.gc-path-pts b { color:var(--path-color); font-weight:900; }
+.gc-section-title { font-family:'Cinzel',serif; font-size:14px; color:#6b4a1a; letter-spacing:4px; margin-bottom:12px; text-align:center; text-transform:uppercase; position:relative; }
+.gc-section-title::before,.gc-section-title::after { content:''; position:absolute; top:50%; width:80px; height:1px; background:linear-gradient(to right,transparent,#8b6914,transparent); }
+.gc-section-title::before { left:0; } .gc-section-title::after { right:0; }
+.gc-stats { position:relative; z-index:1; display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:25px; padding:18px; background:rgba(58,32,16,.08); border:2px dashed #8b6914; border-radius:6px; }
+.gc-stat { text-align:center; padding:8px; border-right:1px solid rgba(139,105,20,.3); }
+.gc-stat:last-child { border-right:none; }
+.gc-stat-icon { font-size:22px; margin-bottom:4px; }
+.gc-stat-num { font-family:'Cinzel',serif; font-weight:900; font-size:26px; color:#6b2050; text-shadow:1px 1px 2px rgba(139,105,20,.3); }
+.gc-stat-label { font-size:10px; color:#6b4a1a; letter-spacing:1.5px; text-transform:uppercase; margin-top:2px; }
+.gc-badges-section { position:relative; z-index:1; margin-bottom:25px; }
+.gc-badges { display:grid; grid-template-columns:repeat(auto-fit,minmax(90px,1fr)); gap:10px; }
+.gc-badge { position:relative; aspect-ratio:1; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-direction:column; font-size:28px; opacity:.3; filter:grayscale(100%); transition:all .3s; cursor:help;
+  background:radial-gradient(circle,rgba(58,32,16,.15) 0%,rgba(139,105,20,.1) 100%); border:2px dashed #8b6914; }
+.gc-badge.unlocked { opacity:1; filter:none; border:2px solid #8b2020;
+  background:radial-gradient(circle,rgba(212,175,55,.35) 0%,rgba(139,32,32,.25) 100%);
+  box-shadow:0 0 15px rgba(212,175,55,.5),inset 0 0 10px rgba(255,250,230,.4); }
+.gc-badge.unlocked::after { content:''; position:absolute; inset:-3px; border-radius:50%; z-index:-1; animation:gcBadgeSpin 8s linear infinite;
+  background:conic-gradient(from 0deg,transparent,rgba(212,175,55,.4),transparent 30%,transparent); }
+@keyframes gcBadgeSpin { to { transform:rotate(360deg); } }
+.gc-badge-name { position:absolute; bottom:-22px; left:50%; transform:translateX(-50%); font-size:9px; color:#6b4a1a; font-family:'Cinzel',serif; letter-spacing:1px; white-space:nowrap; font-weight:bold; }
+.gc-badge.unlocked .gc-badge-name { color:#3a2010; }
+.gc-badge-tooltip { position:absolute; bottom:110%; left:50%; transform:translateX(-50%); background:rgba(20,10,40,.95); color:#e8d9b8; padding:8px 12px; border-radius:4px; font-size:11px; font-style:italic; opacity:0; pointer-events:none; transition:opacity .2s; border:1px solid #d4af37; z-index:10; width:max-content; max-width:200px; }
+.gc-badge:hover .gc-badge-tooltip { opacity:1; }
+.gc-seals { position:relative; z-index:1; display:flex; justify-content:space-around; align-items:center; margin-top:30px; padding-top:20px; border-top:3px double #8b6914; }
+.gc-seal { width:85px; height:85px; border-radius:50%; position:relative; display:flex; align-items:center; justify-content:center; font-family:'Noto Serif JP',serif; font-size:34px; font-weight:900; color:#fff; text-shadow:2px 2px 4px rgba(0,0,0,.5); transform:rotate(-5deg);
+  box-shadow:inset -5px -5px 10px rgba(0,0,0,.4),inset 5px 5px 10px rgba(255,255,255,.2),0 6px 15px rgba(0,0,0,.5); }
+.gc-seal.red { background:radial-gradient(circle at 30% 30%,#c8202e 0%,#8b1a1a 50%,#4a0808 100%); border:3px solid #6b1515; }
+.gc-seal.gold { background:radial-gradient(circle at 30% 30%,#f5d97a 0%,#d4af37 50%,#8b6914 100%); border:3px solid #6b4a1a; color:#3a2010; text-shadow:1px 1px 2px rgba(255,250,230,.5); }
+.gc-seal.purple { background:radial-gradient(circle at 30% 30%,#a855f7 0%,#6b2a8c 50%,#3a1050 100%); border:3px solid #4a1870; transform:rotate(5deg); }
+.gc-seal::before { content:''; position:absolute; inset:6px; border:2px dashed rgba(255,255,255,.3); border-radius:50%; }
+.gc-seal-label { position:absolute; bottom:-20px; left:50%; transform:translateX(-50%) rotate(5deg); font-size:10px; color:#6b4a1a; font-style:italic; letter-spacing:1px; white-space:nowrap; }
+.gc-modal-overlay { position:fixed; inset:0; background:rgba(5,0,15,.85); backdrop-filter:blur(4px); z-index:1000; display:none; align-items:center; justify-content:center; padding:20px; }
+.gc-modal-overlay.show { display:flex; animation:gcModalFadeIn .3s ease; }
+@keyframes gcModalFadeIn { from { opacity:0; } to { opacity:1; } }
+.gc-modal { background:linear-gradient(135deg,#1a0535 0%,#2a1055 100%); border:2px solid #d4af37; border-radius:10px; padding:30px; max-width:500px; width:100%; color:#e8d9b8; max-height:90vh; overflow-y:auto; box-shadow:0 0 60px rgba(168,85,247,.6),0 20px 60px rgba(0,0,0,.7); }
+.gc-modal h2 { font-family:'Cinzel',serif; color:#d4af37; text-align:center; margin:0 0 15px; letter-spacing:3px; }
+.gc-modal p { color:#a78bfa; font-style:italic; text-align:center; margin:0 0 20px; font-size:13px; }
+.gc-modal-label { font-family:'Cinzel',serif; color:#d4af37; margin-bottom:6px; letter-spacing:2px; font-size:12px; }
+.gc-modal-input { width:100%; padding:12px 16px; background:rgba(5,0,15,.5); border:2px solid #6b2a8c; border-radius:6px; color:#e8d9b8; font-family:'Lora',serif; font-size:16px; box-sizing:border-box; transition:border-color .2s,box-shadow .2s; }
+.gc-modal-input:focus { outline:none; border-color:#d4af37; box-shadow:0 0 20px rgba(212,175,55,.4); }
+.gc-modal-avatars { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; }
+.gc-modal-avatar-opt { aspect-ratio:1; background:rgba(5,0,15,.5); border:2px solid #6b2a8c; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:28px; cursor:pointer; transition:all .2s; }
+.gc-modal-avatar-opt:hover { transform:scale(1.1); border-color:#d4af37; }
+.gc-modal-avatar-opt.selected { background:rgba(212,175,55,.2); border-color:#d4af37; box-shadow:0 0 15px rgba(212,175,55,.5); }
+.gc-modal-actions { display:flex; gap:12px; justify-content:center; margin-top:10px; }
+.gc-modal-btn { padding:10px 22px; border:2px solid; border-radius:6px; cursor:pointer; font-family:'Cinzel',serif; font-size:13px; letter-spacing:2px; background:transparent; transition:all .2s; }
+.gc-modal-btn.confirm { border-color:#d4af37; color:#d4af37; }
+.gc-modal-btn.confirm:hover { background:#d4af37; color:#1a0535; box-shadow:0 0 20px rgba(212,175,55,.6); }
+.gc-modal-btn.cancel { border-color:#6b2a8c; color:#a78bfa; }
+.gc-modal-btn.cancel:hover { background:rgba(107,42,140,.3); }
+@media (max-width:720px) {
+  .guild-card { padding:35px 25px 55px; }
+  .gc-identity-row { grid-template-columns:1fr; text-align:center; }
+  .gc-avatar-box { margin:0 auto; }
+  .gc-paths { grid-template-columns:1fr; }
+  .gc-stats { grid-template-columns:repeat(2,1fr); }
+  .gc-stat:nth-child(2) { border-right:none; }
+  .gc-header-main { font-size:28px; }
+  .gc-info-name { font-size:22px; }
+}
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║ [3/3] app.js — 2 miejsca                                      ║
+╚═══════════════════════════════════════════════════════════════╝
+
+┌─ A) ZMIEŃ funkcję showGuildTab (Ctrl+F: "function showGuildTab")
+│    Wystarczy zamienić `tabMap` i dodać gałąź 'karta':
+│
+│    Znajdź linię:
+│      const tabMap = { 'srs': 0, 'dashboard': 1, 'klasy': 2, 'skarbiec': 3 };
+│    Zamień na:
+│      const tabMap = { 'karta': 0, 'srs': 1, 'dashboard': 2, 'klasy': 3, 'skarbiec': 4 };
+│
+│    A w łańcuchu if/else if DODAJ na początku:
+│      if(tab === 'karta') {
+│        document.getElementById('guild-karta').style.display = 'block';
+│        renderGuildCard();
+│      } else if(tab === 'srs') { ... (reszta bez zmian)
+│
+└─ B) DOKLEJ na samym końcu pliku app.js to:
+
+// ======================== 🎴 KARTA GILDII ========================
+const GC_STORAGE_KEY = 'arcana_guild_card';
+const GC_AVATARS = ['🧙','⚔️','🏹','🛡️','🗡️','🧝','🧛','👤','🐺','🦊','🐉','⚗️','📿','🎭','🌸','💀','👹','🌙','☯️','⭐','🔮','📜','🔥','❄️'];
+const GC_BADGES = [
+  {icon:'🌱',name:'Pierwszy Krok',desc:'Pierwsze słowo w Skarbcu',check:s=>s.words>=1},
+  {icon:'⚔️',name:'Pierwsza Walka',desc:'Pierwsza próba w Dojo',check:s=>s.battles>=1},
+  {icon:'📜',name:'Czytelnik Zwojów',desc:'Przeczytaj 3 zwoje',check:s=>s.scrolls>=3},
+  {icon:'📦',name:'Kolekcjoner',desc:'25 słów w Skarbcu',check:s=>s.words>=25},
+  {icon:'🔥',name:'Oddany Adept',desc:'Opanuj 10 słów',check:s=>s.mastered>=10},
+  {icon:'🛡️',name:'Weteran Dojo',desc:'10 prób ukończonych',check:s=>s.battles>=10},
+  {icon:'🗡️',name:'Krzyk Bojowy',desc:'20 prób Kiai',check:s=>s.kiai>=20},
+  {icon:'💀',name:'Ryzykant',desc:'Ukończ Hardcore',check:s=>s.hardcore>=1},
+  {icon:'📅',name:'Wytrwały',desc:'7 dni aktywności',check:s=>s.days>=7},
+  {icon:'📖',name:'Księgowiec',desc:'Wszystkie rozdziały Księgi',check:s=>s.grimoire>=3},
+  {icon:'🏆',name:'Mistrz',desc:'Opanuj 50 słów',check:s=>s.mastered>=50},
+  {icon:'👑',name:'Legenda',desc:'100 słów w Skarbcu',check:s=>s.words>=100}
+];
+function gcLoad(){try{const s=JSON.parse(localStorage.getItem(GC_STORAGE_KEY)||'{}');return{name:s.name||'Bezimienny Wędrowiec',avatar:s.avatar||'🧙',motto:s.motto||'Każde słowo to krok ku mistrzostwu',joinedDate:s.joinedDate||new Date().toISOString(),adeptId:s.adeptId||('A-'+Math.floor(1000+Math.random()*9000))}}catch(e){return{name:'Bezimienny Wędrowiec',avatar:'🧙',motto:'Każde słowo to krok ku mistrzostwu',joinedDate:new Date().toISOString(),adeptId:'A-'+Math.floor(1000+Math.random()*9000)}}}
+function gcSave(p){try{localStorage.setItem(GC_STORAGE_KEY,JSON.stringify(p))}catch(e){}}
+function gcEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')}
+function gcLighten(hex){const c=hex.replace('#','');const r=parseInt(c.substr(0,2),16),g=parseInt(c.substr(2,2),16),b=parseInt(c.substr(4,2),16);const L=v=>Math.min(255,v+60);return'#'+[L(r),L(g),L(b)].map(v=>v.toString(16).padStart(2,'0')).join('')}
+function gcGetStats(){
+  const data=(typeof getClassData==='function')?getClassData():{};
+  const srs=(typeof srsGetStats==='function')?srsGetStats():{mastered:0};
+  const favsCount=(typeof favs!=='undefined')?favs.size:0;
+  const act=(typeof getSRSActivity==='function')?getSRSActivity():{};
+  return{words:favsCount,mastered:srs.mastered||0,battles:data.dojoCompletions||0,hardcore:data.hardcoreCompletions||0,scrolls:data.scrollsRead||0,kiai:data.kiaiAttempts||0,grimoire:data.grimoireChapters||0,days:Object.keys(act).length}
+}
+function gcGetPaths(){
+  if(typeof CLASS_DEFS==='undefined'||typeof getClassData!=='function'||typeof getClassRank!=='function')return[];
+  const data=getClassData();
+  const paths=Object.values(CLASS_DEFS).map(def=>{const pts=def.calcPoints(data);const r=getClassRank(def,pts);return{id:def.id,name:def.name,icon:def.icon,color:def.color,colorLight:gcLighten(def.color),rank:r.name,rankIcon:r.icon,points:pts,nextAt:r.nextThreshold||r.points,maxRank:!r.nextThreshold}});
+  const dom=paths.reduce((a,b)=>a.points>b.points?a:b);
+  paths.forEach(p=>p.isDominant=(p.id===dom.id));
+  return paths;
+}
+function renderGuildCard(){
+  const c=document.getElementById('guild-card-root');if(!c)return;
+  const p=gcLoad(),stats=gcGetStats(),paths=gcGetPaths();
+  const dom=paths.find(x=>x.isDominant)||paths[0]||{name:'Adept',icon:'🧙',rank:'Nowicjusz',rankIcon:'🌱'};
+  const j=new Date(p.joinedDate),M=['I','II','III','IV','V','VI','VII','VIII','IX','X','XI','XII'];
+  c.innerHTML=`<div class="guild-card">
+    <div class="gc-corner tl"><div class="gc-corner-ornament"></div></div>
+    <div class="gc-corner tr"><div class="gc-corner-ornament"></div></div>
+    <div class="gc-corner bl"><div class="gc-corner-ornament"></div></div>
+    <div class="gc-corner br"><div class="gc-corner-ornament"></div></div>
+    <button class="gc-edit-fab" onclick="openGcEditModal()" title="Edytuj"><i class="fa-solid fa-feather"></i></button>
+    <div class="gc-header">
+      <div class="gc-header-top">✦ Wielka Gildia Arkanów ✦</div>
+      <h1 class="gc-header-main">Karta Członkowska</h1>
+      <div class="gc-header-jp">魔 術 師 の 印</div>
+      <div class="gc-header-sub">~ Pergamin wiążący do zakonu Nihongo ~</div>
+    </div>
+    <div class="gc-identity-row">
+      <div class="gc-avatar-box" onclick="openGcEditModal()">
+        <div class="gc-avatar-frame">${gcEsc(p.avatar)}</div>
+        <div class="gc-avatar-badge">${gcEsc(dom.icon)}</div>
+        <div class="gc-edit-hint">kliknij aby zmienić</div>
+      </div>
+      <div class="gc-info">
+        <div><div class="gc-info-label">Imię Adepta</div>
+          <div class="gc-info-name" onclick="openGcEditModal()"><span>${gcEsc(p.name)}</span><span class="gc-info-name-edit"><i class="fa-solid fa-pen"></i></span></div></div>
+        <div><div class="gc-info-label">Aktualny Tytuł</div>
+          <div class="gc-info-title"><b>${gcEsc(dom.rank)}</b> Ścieżki <b>${gcEsc(dom.name)}a</b></div></div>
+        <div class="gc-info-motto" onclick="openGcEditModal()">"<span>${gcEsc(p.motto)}</span>"</div>
+      </div>
+      <div class="gc-id-box">
+        <div class="gc-id-label">ID Adepta</div>
+        <div class="gc-id-num">#${gcEsc(p.adeptId)}</div>
+        <div class="gc-id-joined">dołączył: ${j.getDate()} ${M[j.getMonth()]} ${j.getFullYear()}</div>
+      </div>
+    </div>
+    <div class="gc-paths">${paths.map(pp=>{const pr=pp.maxRank?100:Math.min(100,Math.round((pp.points/Math.max(1,pp.nextAt))*100));return`<div class="gc-path ${pp.isDominant?'is-dominant':''}" style="--path-color:${pp.color};--path-color-light:${pp.colorLight}"><div class="gc-path-header"><div class="gc-path-icon">${pp.icon}</div><div class="gc-path-info"><div class="gc-path-name">${gcEsc(pp.name)}</div><div class="gc-path-rank">${pp.rankIcon} ${gcEsc(pp.rank)}</div></div></div><div class="gc-path-bar"><div class="gc-path-fill" style="width:${pr}%"></div></div><div class="gc-path-pts"><span><b>${pp.points}</b> pkt</span><span>${pp.maxRank?'✦ MAX':'cel: '+pp.nextAt}</span></div></div>`}).join('')}</div>
+    <div class="gc-section-title">⚜ Kroniki Czynów ⚜</div>
+    <div class="gc-stats">
+      <div class="gc-stat"><div class="gc-stat-icon">📚</div><div class="gc-stat-num">${stats.words}</div><div class="gc-stat-label">Słów w Skarbcu</div></div>
+      <div class="gc-stat"><div class="gc-stat-icon">🔥</div><div class="gc-stat-num">${stats.mastered}</div><div class="gc-stat-label">Opanowane</div></div>
+      <div class="gc-stat"><div class="gc-stat-icon">⚔️</div><div class="gc-stat-num">${stats.battles}</div><div class="gc-stat-label">Próby Dojo</div></div>
+      <div class="gc-stat"><div class="gc-stat-icon">📅</div><div class="gc-stat-num">${stats.days}</div><div class="gc-stat-label">Dni Aktywności</div></div>
+    </div>
+    <div class="gc-badges-section">
+      <div class="gc-section-title">✦ Pieczęcie Czynów ✦</div>
+      <div class="gc-badges">${GC_BADGES.map(b=>{const u=b.check(stats);return`<div class="gc-badge ${u?'unlocked':''}"><span style="position:relative;z-index:1">${b.icon}</span><div class="gc-badge-name">${gcEsc(b.name)}</div><div class="gc-badge-tooltip"><b>${gcEsc(b.name)}</b><br>${gcEsc(b.desc)}${u?'':' 🔒'}</div></div>`}).join('')}</div>
+    </div>
+    <div class="gc-seals">
+      <div style="position:relative"><div class="gc-seal red">明</div><div class="gc-seal-label">Mistrzyni Akemi</div></div>
+      <div style="position:relative"><div class="gc-seal gold">秘</div><div class="gc-seal-label">Zakon Arkanów</div></div>
+      <div style="position:relative"><div class="gc-seal purple">魔</div><div class="gc-seal-label">Wielki Mag</div></div>
+    </div>
+  </div>`;
+}
+let gcSelectedAvatar='🧙';
+function openGcEditModal(){
+  const p=gcLoad();
+  const ni=document.getElementById('gc-modal-name'),mi=document.getElementById('gc-modal-motto');
+  if(ni)ni.value=p.name==='Bezimienny Wędrowiec'?'':p.name;
+  if(mi)mi.value=p.motto==='Każde słowo to krok ku mistrzostwu'?'':p.motto;
+  gcSelectedAvatar=p.avatar;
+  const g=document.getElementById('gc-modal-avatars');
+  if(g){g.innerHTML=GC_AVATARS.map(a=>`<div class="gc-modal-avatar-opt ${a===gcSelectedAvatar?'selected':''}" data-a="${gcEsc(a)}">${a}</div>`).join('');
+    g.querySelectorAll('.gc-modal-avatar-opt').forEach(el=>el.addEventListener('click',()=>{gcSelectedAvatar=el.getAttribute('data-a');g.querySelectorAll('.gc-modal-avatar-opt').forEach(e=>e.classList.remove('selected'));el.classList.add('selected')}));}
+  document.getElementById('gc-modal-overlay')?.classList.add('show');
+}
+function closeGcEditModal(){document.getElementById('gc-modal-overlay')?.classList.remove('show')}
+function saveGcEdit(){
+  const p=gcLoad();
+  p.name=(document.getElementById('gc-modal-name')?.value||'').trim()||'Bezimienny Wędrowiec';
+  p.motto=(document.getElementById('gc-modal-motto')?.value||'').trim()||'Każde słowo to krok ku mistrzostwu';
+  p.avatar=gcSelectedAvatar;
+  gcSave(p);closeGcEditModal();renderGuildCard();
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const ov=document.getElementById('gc-modal-overlay');
+  if(ov)ov.addEventListener('click',e=>{if(e.target===ov)closeGcEditModal()});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=document.getElementById('gc-modal-overlay');if(o&&o.classList.contains('show'))closeGcEditModal()}});
+});
+// ================= koniec Karty Gildii =================
+
+
+═══════════════════════════════════════════════════════════════
+GOTOWE. Po wklejeniu przejdź do 🏛️ Gildia → 🎴 Karta.
+Dane w localStorage: klucz "arcana_guild_card".
+═══════════════════════════════════════════════════════════════
